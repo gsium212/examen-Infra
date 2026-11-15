@@ -1,22 +1,68 @@
 {% extends 'tienda/base.html' %}
+{% block title %}Órdenes | Grupo 1 Tienda Virtual{% endblock %}
 {% block content %}
-<a class="btn" href="{% url 'crear_orden' %}">+ Nueva orden</a>
-<table>
-    <tr><th>ID</th><th>Cliente</th><th>Fecha</th><th>Total</th><th>Acciones</th></tr>
-    {% for o in ordenes %}
-    <tr>
-        <td>{{ o.id }}</td>
-        <td>{{ o.cliente }}</td>
-        <td>{{ o.fecha }}</td>
-        <td>${{ o.total }}</td>
-        <td>
-            <a class="btn" href="{% url 'lista_detalles' o.id %}">Detalles</a>
-            <a class="btn" href="{% url 'editar_orden' o.id %}">Editar</a>
-            <a class="btn" href="{% url 'eliminar_orden' o.id %}">Eliminar</a>
-        </td>
-    </tr>
-    {% empty %}
-    <tr><td colspan="5">No hay órdenes</td></tr>
-    {% endfor %}
-</table>
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">Panel de control / 01</p>
+        <h1>Órdenes</h1>
+        <p class="lede">Administra las compras y consulta el estado de cada operación.</p>
+    </div>
+    <a class="btn btn-primary" href="{% url 'crear_orden' %}">＋ Nueva orden</a>
+</section>
+
+<section class="metrics" aria-label="Resumen">
+    <article class="metric-card">
+        <span>Órdenes registradas</span>
+        <strong>{{ ordenes|length }}</strong>
+    </article>
+    <article class="metric-card">
+        <span>Plataforma</span>
+        <strong>En línea</strong>
+    </article>
+    <article class="metric-card">
+        <span>Grupo</span>
+        <strong>01</strong>
+    </article>
+</section>
+
+<section class="panel">
+    <div class="panel-heading">
+        <div>
+            <h2>Registro de órdenes</h2>
+            <p>Selecciona una orden para ver sus productos o actualizarla.</p>
+        </div>
+        <span class="eyebrow" style="margin: 0">Base de datos / activa</span>
+    </div>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr><th>ID</th><th>Cliente</th><th>Fecha</th><th>Total</th><th>Acciones</th></tr>
+            </thead>
+            <tbody>
+                {% for o in ordenes %}
+                <tr>
+                    <td class="id-cell">#{{ o.id }}</td>
+                    <td>{{ o.cliente }}</td>
+                    <td>{{ o.fecha }}</td>
+                    <td class="money">${{ o.total|floatformat:2 }}</td>
+                    <td>
+                        <div class="actions">
+                            <a class="btn" href="{% url 'lista_detalles' o.id %}">Detalles</a>
+                            <a class="btn" href="{% url 'editar_orden' o.id %}">Editar</a>
+                            <a class="btn btn-danger" href="{% url 'eliminar_orden' o.id %}">Eliminar</a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td class="empty-state" colspan="5">
+                        <strong>Aún no hay órdenes</strong>
+                        Crea una orden para comenzar a gestionar las ventas.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
 {% endblock %}

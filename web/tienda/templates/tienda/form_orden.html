@@ -1,10 +1,27 @@
 {% extends 'tienda/base.html' %}
+{% block title %}{{ accion }} orden | Grupo 1 Tienda Virtual{% endblock %}
 {% block content %}
-<h2>{{ accion }} orden</h2>
-<form method="post">
-    {% csrf_token %}
-    <label>Cliente: <input name="cliente" value="{{ orden.cliente|default:'' }}" required></label>
-    <button type="submit">Guardar</button>
-</form>
-<br><a class="btn" href="{% url 'lista_ordenes' %}">Volver</a>
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">Panel de control / órdenes</p>
+        <h1>{{ accion }} orden</h1>
+        <p class="lede">Ingresa los datos del cliente para guardar la orden.</p>
+    </div>
+</section>
+
+<section class="form-card">
+    <h2>Datos del cliente</h2>
+    <p class="lede">Los campos marcados son necesarios para continuar.</p>
+    <form method="post">
+        {% csrf_token %}
+        <div class="field">
+            <label for="cliente">Nombre del cliente</label>
+            <input id="cliente" name="cliente" value="{{ orden.cliente|default:'' }}" autocomplete="name" required>
+        </div>
+        <div class="form-actions">
+            <button type="submit">Guardar orden</button>
+            <a class="btn" href="{% url 'lista_ordenes' %}">Cancelar</a>
+        </div>
+    </form>
+</section>
 {% endblock %}
