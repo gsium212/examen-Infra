@@ -1,0 +1,10 @@
+{% extends 'tienda/base.html' %}
+{% block content %}
+<h2>{{ accion }} orden</h2>
+<form method="post">
+    {% csrf_token %}
+    <label>Cliente: <input name="cliente" value="{{ orden.cliente|default:'' }}" required></label>
+    <button type="submit">Guardar</button>
+</form>
+<br><a class="btn" href="{% url 'lista_ordenes' %}">Volver</a>
+{% endblock %}

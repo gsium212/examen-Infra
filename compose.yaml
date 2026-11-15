@@ -1,0 +1,66 @@
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: ordenes_db
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD}
+    volumes:
+      - sql_data:/var/opt/mssql
+    networks: [appnet]
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -Q 'SELECT 1' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 40s
+    deploy:
+      resources:
+        limits: { cpus: "1.0", memory: 2G }
+
+  db-init:
+    image: mcr.microsoft.com/mssql-tools
+    container_name: ordenes_db_init
+    depends_on:
+      db: { condition: service_healthy }
+    environment:
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD}
+    volumes:
+      - ./db/init.sql:/scripts/init.sql
+    entrypoint: >
+      /bin/bash -c "/opt/mssql-tools/bin/sqlcmd
+      -S db -U sa -P \"$$MSSQL_SA_PASSWORD\" -i /scripts/init.sql"
+    networks: [appnet]
+
+  api:
+    build: ./api
+    image: ${DOCKERHUB_USER:-local}/ordenes-api:1.0.0
+    container_name: ordenes_api
+    env_file: .env
+    depends_on:
+      db: { condition: service_healthy }
+    ports: ["5000:5000"]
+    networks: [appnet]
+    deploy:
+      resources:
+        limits: { cpus: "0.5", memory: 512M }
+
+  web:
+    build: ./web
+    image: ${DOCKERHUB_USER:-local}/ordenes-web:1.0.0
+    container_name: ordenes_web
+    env_file: .env
+    depends_on: [api]
+    ports: ["8000:8000"]
+    networks: [appnet]
+    deploy:
+      resources:
+        limits: { cpus: "0.5", memory: 512M }
+
+networks:
+  appnet:
+    driver: bridge
+
+volumes:
+  sql_data:
+    name: ordenes_sql_data

@@ -1,0 +1,12 @@
+{% extends 'tienda/base.html' %}
+{% block content %}
+<h2>{{ accion }} detalle (orden #{{ oid }})</h2>
+<form method="post">
+    {% csrf_token %}
+    <label>Producto: <input name="producto" required></label><br><br>
+    <label>Cantidad: <input name="cantidad" type="number" min="1" required></label><br><br>
+    <label>Precio unitario: <input name="precio_unitario" type="number" step="0.01" min="0" required></label><br><br>
+    <button type="submit">Guardar</button>
+</form>
+<br><a class="btn" href="{% url 'lista_detalles' oid %}">Volver</a>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends 'tienda/base.html' %}
+{% block content %}
+<h2>¿Eliminar {{ tipo }} #{{ id }}?</h2>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Sí, eliminar</button>
+</form>
+<br><a class="btn" href="{% if tipo == 'orden' %}{% url 'lista_ordenes' %}{% else %}{% url 'lista_detalles' oid %}{% endif %}">Cancelar</a>
+{% endblock %}
